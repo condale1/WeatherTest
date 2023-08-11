@@ -7,7 +7,7 @@ svg {
 }
 
 body {
-    background-image: url(images/bg_new.jpeg);
+    background-image: url(images/weatherapp_bg.jpeg);
     background-color: grey;
     background-blend-mode: darken;
     background-size: cover;
