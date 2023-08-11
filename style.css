@@ -7,15 +7,29 @@ svg {
 }
 
 body {
-    background-image: url(images/clouds.avif);
+    background-image: url(images/bg_new.jpeg);
+    background-color: grey;
+    background-blend-mode: darken;
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
-    color: white;
+    
 }
 
 img {
-    filter: invert(100%) sepia(3%) saturate(589%) hue-rotate(297deg) brightness(119%) contrast(100%);;
+    filter: invert(100%) sepia(3%) saturate(589%) hue-rotate(297deg) brightness(119%) contrast(100%);
+}
+
+input[type="search"]::-webkit-search-cancel-button {
+    filter: brightness(0) invert(1);
+  }
+
+input:focus {
+    outline: none !important;
+  }
+
+li {
+    color: white !important;
 }
 
 .card {
@@ -32,6 +46,10 @@ img {
     opacity: 1;
 }
 
+.form-text {
+    color: white !important;
+}
+
 .my-switch {
     padding-top: 3px;
 }
@@ -45,3 +63,7 @@ img {
       height: 100px; 
       margin: 10px;
 }
+
+.pac-matched {
+    color: black !important;
+  }

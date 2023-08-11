@@ -1,33 +1,81 @@
 document.addEventListener("DOMContentLoaded", function () {
-  let APPID = "066f6ca8fa7b5d4bee39e2a2c96dab0b";
-  let weatherForm = document.getElementById("weatherForm");
-  let unitSwitch = document.getElementById("unitSwitch");
-  let cityNameInput = document.getElementById("cityName");
-  let weatherOutput = document.querySelector(".weatherOutput"); // Get the weather output container
+  const APPID = "066f6ca8fa7b5d4bee39e2a2c96dab0b";
+  const weatherForm = document.getElementById("weatherForm");
+  const unitSwitch = document.getElementById("unitSwitch");
+  const cityNameInput = document.getElementById("cityName");
+  const weatherOutput = document.querySelector(".weatherOutput"); 
+  const suggestionsList = document.getElementById("suggestionsList");
+
+  cityNameInput.addEventListener("input", function () {
+    const inputText = cityNameInput.value.trim();
+
+    if (inputText.length >= 3) {
+      clearSuggestions();
+
+      const autoCompleteService = new google.maps.places.AutocompleteService();
+      const request = {
+        input: inputText,
+      };
+
+      autoCompleteService.getPlacePredictions(request, function (predictions, status) {
+        if (status === google.maps.places.PlacesServiceStatus.OK) {
+          const suggestions = predictions.map(prediction => ({
+            name: prediction.description,
+          }));
+          displaySuggestions(suggestions, cityNameInput);
+        } else {
+          console.error("Error fetching city suggestions:", status);
+          clearSuggestions();
+        }
+      });
+    } else {
+      clearSuggestions();
+    }
+  });
+
+  cityNameInput.addEventListener("keydown", function (event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      const selectedSuggestion = document.querySelector(".suggestion.selected");
+      if (selectedSuggestion) {
+        cityNameInput.value = selectedSuggestion.textContent;
+        clearSuggestions();
+      }
+    }
+  });
+
+    suggestionsList.addEventListener("click", function (event) {
+      if (event.target && event.target.nodeName === "LI") {
+        cityNameInput.value = event.target.textContent;
+        suggestionsList.style.display = "none";
+        cityNameInput.focus(); // Move focus back to input field
+        console.log(event.target.textContent);
+      }
+    });
 
   weatherForm.addEventListener("submit", async function (event) {
     event.preventDefault();
     console.log("Form submitted");
 
-    let cityName = cityNameInput.value;
+    const cityName = cityNameInput.value;
     console.log("City name:", cityName);
 
-    let units = unitSwitch.checked ? "imperial" : "metric";
+    const units = unitSwitch.checked ? "imperial" : "metric";
     console.log("Units selected:", units);
 
     try {
-      let weatherData = await getWeather(units, cityName, APPID);
+      const weatherData = await getWeather(units, cityName, APPID);
       console.log("Weather data:", weatherData);
 
-      let temperature = weatherData.main.temp;
-      let unitLabel = units === "imperial" ? "°F" : "°C";
-
-      let tempElement = weatherOutput.querySelector(".temp");
-      let cityElement = weatherOutput.querySelector(".city");
-      let windElement = weatherOutput.querySelector(".wind");
-      let humidityElement = weatherOutput.querySelector(".humidity");
-      let weatherIcon = weatherOutput.querySelector(".weather-icon");
-      let weatherCondition = weatherData.weather[0].main;
+      const temperature = weatherData.main.temp;
+      const unitLabel = units === "imperial" ? "°F" : "°C";
+      const windSpeedLabel = units === "imperial" ? "mph" : "m/s";
+      const tempElement = weatherOutput.querySelector(".temp");
+      const cityElement = weatherOutput.querySelector(".city");
+      const windElement = weatherOutput.querySelector(".wind");
+      const humidityElement = weatherOutput.querySelector(".humidity");
+      const weatherIcon = weatherOutput.querySelector(".weather-icon");
+      const weatherCondition = weatherData.weather[0].main;
 
       switch (weatherCondition) {
         case "Clear":
@@ -52,7 +100,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       tempElement.textContent = `${temperature.toFixed(1)} ${unitLabel}`;
       cityElement.textContent = `${weatherData.name}`;
-      windElement.textContent = `${weatherData.wind.speed} m/s`;
+      windElement.textContent = `${weatherData.wind.speed} ${windSpeedLabel}`;
       humidityElement.textContent = `${weatherData.main.humidity}%`;
       console.log(weatherCondition);
 
@@ -65,8 +113,47 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 async function getWeather(units, cityName, appId) {
-  let apiUrl = `https://api.openweathermap.org/data/2.5/weather?units=${units}&q=${cityName}&appid=${appId}`;
-  let response = await fetch(apiUrl);
-  let data = await response.json();
+  const apiUrl = `https://api.openweathermap.org/data/2.5/weather?units=${units}&q=${cityName}&appid=${appId}`;
+  const response = await fetch(apiUrl);
+  const data = await response.json();
   return data;
+}
+
+function displaySuggestions(suggestions, cityNameInput) {
+  clearSuggestions();
+  suggestions.forEach((suggestion, index) => {
+    const li = document.createElement("li");
+    li.textContent = suggestion.name;
+    li.classList.add("list-group-item", "suggestion", "bg-transparent");
+    suggestionsList.appendChild(li);
+
+    li.addEventListener("mouseover", function () {
+      highlightSuggestion(index);
+    });
+
+    li.addEventListener("click", function () {
+      selectedSuggestion = suggestion.name;
+      cityNameInput.value = selectedSuggestion;
+      clearSuggestions();
+      cityNameInput.blur(); // Hide keyboard on mobile
+    });
+  });
+
+  suggestionsList.style.display = "block";
+}
+
+function highlightSuggestion(index) {
+  const suggestions = suggestionsList.querySelectorAll(".suggestion");
+  suggestions.forEach((suggestion, i) => {
+    if (i === index) {
+      suggestion.classList.add("selected");
+    } else {
+      suggestion.classList.remove("selected");
+    }
+  });
+}
+
+function clearSuggestions() {
+  suggestionsList.innerHTML = "";
+  suggestionsList.style.display = "none";
 }
