@@ -32,10 +32,21 @@ li {
     color: white !important;
 }
 
+.form-switch.form-switch-md {
+    margin-bottom: 1rem; /* JUST FOR STYLING PURPOSE */
+  }
+  
+  .form-switch.form-switch-md .form-check-input {
+    height: 1.5rem;
+    width: calc(2rem + 0.75rem);
+    border-radius: 3rem;
+  }
+  
+
 .card {
     width: 90%;
     max-width: 600px;
-    min-width: 200px; 
+    min-width: 20rem; 
 
     backdrop-filter: blur(1rem);
     box-shadow: 1.3rem 1.3rem 1.3rem rgba(0, 0, 0, 0.5)
@@ -48,10 +59,12 @@ li {
 
 .form-text {
     color: white !important;
+    font-size: 1.3em !important;
 }
 
 .my-switch {
-    padding-top: 3px;
+    padding-bottom: 1rem;
+    justify-content: center;
 }
   
 .my-switch .form-switch {
