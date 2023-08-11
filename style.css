@@ -1,9 +1,21 @@
+* {
+    color: white;
+}
+
+svg {
+    fill: white;
+}
+
 body {
     background-image: url(images/clouds.avif);
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
     color: white;
+}
+
+img {
+    filter: invert(100%) sepia(3%) saturate(589%) hue-rotate(297deg) brightness(119%) contrast(100%);;
 }
 
 .card {
@@ -25,6 +37,11 @@ body {
 }
   
 .my-switch .form-switch {
-    margin: 3px 0px 0px 5px;
-    width: 20px;
+    margin: 0.25rem -0.5rem 0 0.5rem;
+}
+
+.weather-icon {
+    width: 100px; 
+      height: 100px; 
+      margin: 10px;
 }
